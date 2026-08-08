@@ -21,7 +21,12 @@ ARG PI_AI_VERSION=0.0.1
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ=UTC \
     PI_USER=pi \
-    PI_HOME=/home/pi
+    PI_HOME=/home/pi \
+    # UTF-8 locale for Cyrillic input in tmux/pi
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    LC_CTYPE=C.UTF-8 \
+    LANGUAGE=en_US.UTF-8
 
 # ---------------------------------------------------------------------------
 # 1. System packages — every CLI used by the shitcluster skills

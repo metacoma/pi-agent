@@ -25,6 +25,10 @@ PI_MODEL="${PI_MODEL:-openai/deepseek-v4-flash-q3}"
 
 export HOME="${PI_HOME}"
 export TERM="${TERM:-xterm-256color}"
+# UTF-8 locale: required for Cyrillic input inside tmux/pi
+export LANG="${LANG:-C.UTF-8}"
+export LC_ALL="${LC_ALL:-C.UTF-8}"
+export LC_CTYPE="${LC_CTYPE:-C.UTF-8}"
 export PI_CODING_AGENT_DIR="${PI_AGENT_DIR}"
 export KUBECONFIG="${KUBECONFIG:-${PI_HOME}/.kube/config}"
 
