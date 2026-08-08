@@ -2,7 +2,7 @@ name: build
 
 on:
   push:
-    branches: [master, main]
+    branches: ['**']
   workflow_dispatch:
 
 concurrency:
@@ -37,6 +37,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Compute image tags
+        id: tags
+        run: |
+          # main/master -> :latest; any other branch -> :<branch> (slashes sanitized)
+          BRANCH="${GITHUB_REF_NAME}"
+          if [ "${BRANCH}" = "main" ] || [ "${BRANCH}" = "master" ]; then
+            EXTRA="${IMAGE}:latest"
+          else
+            EXTRA="${IMAGE}:${BRANCH//\//-}"
+          fi
+          echo "tags=${EXTRA},${IMAGE}:${GITHUB_SHA}" >> "${GITHUB_OUTPUT}"
+
       - name: Build and push
         uses: docker/build-push-action@v7.3.0
         with:
@@ -44,8 +56,6 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags: |
-            ${{ env.IMAGE }}:latest
-            ${{ env.IMAGE }}:${{ github.sha }}
+          tags: ${{ steps.tags.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
