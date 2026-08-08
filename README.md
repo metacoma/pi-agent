@@ -34,6 +34,26 @@ The entrypoint clones/updates the gitops repo into `/workspace/shitcluster` and 
 kubectl exec -it -n ai deploy/pi-agent -- tmux attach -t pi
 ```
 
+## Telegram bridge security
+
+The `pi-telegram-plus` extension mirrors assistant replies, tool calls and tool
+output to the Telegram bot chat. Because decrypted secrets (SOPS, Vault,
+`make argocd_password`) often appear in tool output, the container ships
+security defaults that keep secrets out of Telegram:
+
+- `config/tg.json` → installed as `/etc/pi-agent/tg.json.defaults`:
+  `tool: "hidden"` and `thinking: "hidden"` (tool arguments and tool results
+  are never sent to Telegram).
+- The entrypoint **forces** these render levels into the injected `tg.json` on
+  every start, even if the Secret (Vault `kv/pi_agent#tg_json_base64`)
+  overrides them. `botToken`/`allowedUserId` still come from the Secret.
+- `config/AGENTS.md` → installed as `~/.pi/agent/AGENTS.md` (global pi
+  instructions): the agent must never paste raw secrets into replies, since
+  every reply is mirrored to Telegram.
+
+To relax (not recommended): edit the entrypoint merge or `/etc/pi-agent/
+tg.json.defaults` in the image.
+
 ## Build locally
 
 ```bash

@@ -169,6 +169,13 @@ RUN chmod +x /usr/local/bin/*
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+# Telegram bridge security defaults (tg.json tool/thinking=hidden) and global
+# agent instructions (loaded by pi from ~/.pi/agent/AGENTS.md)
+COPY config/tg.json /etc/pi-agent/tg.json.defaults
+COPY config/AGENTS.md ${PI_HOME}/.pi/agent/AGENTS.md
+RUN chmod 644 /etc/pi-agent/tg.json.defaults \
+    && chown -R ${PI_USER}:${PI_USER} ${PI_HOME}/.pi/agent/AGENTS.md
+
 WORKDIR /workspace
 EXPOSE 22
 

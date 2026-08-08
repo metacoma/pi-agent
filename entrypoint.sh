@@ -92,6 +92,39 @@ done
 [ -f "${KUBECONFIG}" ] || echo "[pi-agent] WARNING: ${KUBECONFIG} not found"
 
 # ---------------------------------------------------------------------------
+# 4b. Telegram bridge security defaults
+#     The extension (pi-telegram-plus) mirrors assistant replies, tool calls
+#     and tool output to Telegram. tool/thinking render levels are FORCED to
+#     "hidden" (from config/tg.json defaults) so that tool arguments and
+#     tool results — where decrypted secrets live — never reach Telegram,
+#     even if the injected tg.json omits or overrides them. The injected
+#     secret tg.json still provides botToken/allowedUserId/etc.
+# ---------------------------------------------------------------------------
+TG_DEFAULTS="${TG_DEFAULTS:-/etc/pi-agent/tg.json.defaults}"
+if [ -f "${TG_DEFAULTS}" ]; then
+  if [ -f "${PI_AGENT_DIR}/tg.json" ]; then
+    echo "[pi-agent] applying telegram security defaults (tool/thinking hidden)"
+    tmp_tg="$(mktemp)"
+    if jq -s \
+      '.[0] as $d | .[1] as $in |
+       ($d * $in)
+       | .global.tool = $d.global.tool
+       | .global.thinking = $d.global.thinking' \
+      "${TG_DEFAULTS}" "${PI_AGENT_DIR}/tg.json" > "${tmp_tg}"; then
+      chmod 600 "${tmp_tg}"
+      # write through the existing file: preserves the emptyDir mount,
+      # inode, and the 1001:1001 ownership set by the tg-config-init
+      # initContainer, so the extension can keep persisting state
+      cat "${tmp_tg}" > "${PI_AGENT_DIR}/tg.json"
+    fi
+    rm -f "${tmp_tg}"
+  else
+    echo "[pi-agent] no injected tg.json — installing telegram security defaults"
+    install -m 600 "${TG_DEFAULTS}" "${PI_AGENT_DIR}/tg.json"
+  fi
+fi
+
+# ---------------------------------------------------------------------------
 # 5. Start pi in tmux
 # ---------------------------------------------------------------------------
 cd "${REPO_DIR}"

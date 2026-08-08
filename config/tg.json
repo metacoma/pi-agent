@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "global": {
+    "telegramEnabled": true,
+    "tool": "hidden",
+    "thinking": "hidden"
+  },
+  "workspaces": []
+}
