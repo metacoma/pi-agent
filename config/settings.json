@@ -1,8 +1,9 @@
 {
-  "lastChangelogVersion": "0.83.0",
+  "lastChangelogVersion": "0.80.3",
   "packages": [
     "npm:pi-mcp-adapter",
-    "npm:pi-ai"
+    "npm:pi-ai",
+    "npm:pi-telegram-plus"
   ],
   "theme": "dark",
   "defaultProvider": "litellm",

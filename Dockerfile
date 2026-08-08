@@ -14,9 +14,10 @@ ARG ARGOCD_VERSION=v3.5.0
 ARG VALS_VERSION=0.45.0
 ARG YQ_VERSION=v4.53.3
 ARG NODE_VERSION=v24.19.0
-ARG PI_VERSION=0.83.0
+ARG PI_VERSION=0.81.1
 ARG PI_MCP_ADAPTER_VERSION=2.15.0
 ARG PI_AI_VERSION=0.0.1
+ARG PI_TELEGRAM_PLUS_VERSION=0.0.5
 
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ=UTC \
@@ -143,11 +144,12 @@ RUN useradd -m -s /bin/bash ${PI_USER} \
     && mkdir -p ${PI_HOME}/.pi/agent \
     && chown -R ${PI_USER}:${PI_USER} ${PI_HOME}
 
-# pre-install pi packages (pi-mcp-adapter, pi-ai) into the agent dir
+# pre-install pi packages (pi-mcp-adapter, pi-ai, pi-telegram-plus) into the agent dir
 USER ${PI_USER}
 ENV HOME=${PI_HOME}
 RUN pi install npm:pi-mcp-adapter@${PI_MCP_ADAPTER_VERSION} \
     && pi install npm:pi-ai@${PI_AI_VERSION} \
+    && pi install npm:pi-telegram-plus@${PI_TELEGRAM_PLUS_VERSION} \
     && pi list || true
 
 USER root
