@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "mcphub": {
+      "url": "https://mcphub.mansion.metacoma.org/mcp",
+      "transport": "streamable-http",
+      "directTools": true
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "litellm": {
+    "baseUrl": "https://litellm.mansion.metacoma.org/v1",
+    "api": "openai-completions",
+    "apiKey": "<INJECTED-FROM-VAULT: kv/pi_agent#models_json>",
+    "models": [
+      {
+        "id": "openai/qwen36-35b",
+        "contextWindow": 262144,
+        "maxTokens": 131072
+      },
+      {
+        "id": "openai/gemma4-31b",
+        "contextWindow": 131072,
+        "maxTokens": 131072
+      },
+      {
+        "id": "openai/qwen36-27b",
+        "contextWindow": 262144
+      },
+      {
+        "id": "openai/deepseek-v4-flash-q3",
+        "contextWindow": 524288,
+        "maxTokens": 231072,
+        "reasoning": true,
+        "thinkingLevelMap": {
+          "off": "none",
+          "minimal": null,
+          "low": "low",
+          "medium": null,
+          "high": "high",
+          "xhigh": null,
+          "max": "max"
+        },
+        "compat": {
+          "supportsReasoningEffort": false,
+          "requiresReasoningContentOnAssistantMessages": true,
+          "thinkingFormat": "chat-template",
+          "chatTemplateKwargs": {
+            "thinking": {
+              "$var": "thinking.enabled"
+            },
+            "reasoning_effort": {
+              "$var": "thinking.effort",
+              "omitWhenOff": true
+            }
+          }
+        }
+      }
+    ]
+  }
+}

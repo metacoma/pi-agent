@@ -1,0 +1,26 @@
+{
+  "lastChangelogVersion": "0.83.0",
+  "packages": [
+    "npm:pi-mcp-adapter",
+    "npm:pi-ai"
+  ],
+  "theme": "dark",
+  "defaultProvider": "litellm",
+  "defaultModel": "openai/deepseek-v4-flash-q3",
+  "compaction": {
+    "enabled": false
+  },
+  "hideThinkingBlock": false,
+  "httpIdleTimeoutMs": 1800000,
+  "retry": {
+    "enabled": true,
+    "maxRetries": 3,
+    "baseDelayMs": 2000,
+    "provider": {
+      "timeoutMs": 7200000,
+      "maxRetries": 0,
+      "maxRetryDelayMs": 60000
+    }
+  },
+  "defaultThinkingLevel": "high"
+}
