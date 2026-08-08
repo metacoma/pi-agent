@@ -11,7 +11,7 @@ ARG KCL_VERSION=v0.11.2
 ARG SOPS_VERSION=3.13.3
 ARG VAULT_VERSION=2.0.4
 ARG ARGOCD_VERSION=v3.5.0
-ARG VALS_VERSION=v0.45.0
+ARG VALS_VERSION=0.45.0
 ARG YQ_VERSION=v4.53.3
 ARG NODE_VERSION=v24.19.0
 ARG PI_VERSION=0.83.0
@@ -108,7 +108,7 @@ RUN curl -fsSL https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAU
     && rm /tmp/vault.zip
 
 # vals (ref+vault:// resolution)
-RUN curl -fsSL https://github.com/helmfile/vals/releases/download/${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz \
+RUN curl -fsSL https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz \
     | tar -xz -C /usr/local/bin vals \
     && chmod +x /usr/local/bin/vals
 
