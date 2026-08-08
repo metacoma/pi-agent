@@ -37,7 +37,36 @@ if [ "$(id -un)" = "root" ]; then
 fi
 
 # ---------------------------------------------------------------------------
-# 2. Clone / update the gitops repository
+# 2. Generate in-cluster kubeconfig from the ServiceAccount token (preferred)
+#    Falls back to a mounted kubeconfig Secret if no SA token is present.
+# ---------------------------------------------------------------------------
+SA_DIR=/var/run/secrets/kubernetes.io/serviceaccount
+if [ -f "${SA_DIR}/token" ] && [ -n "${KUBERNETES_SERVICE_HOST:-}" ]; then
+  echo "[pi-agent] generating in-cluster kubeconfig from ServiceAccount ${SA_DIR}/token"
+  cat > "${KUBECONFIG}" <<EOF
+apiVersion: v1
+kind: Config
+clusters:
+- cluster:
+    certificate-authority: ${SA_DIR}/ca.crt
+    server: https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT}
+  name: in-cluster
+contexts:
+- context:
+    cluster: in-cluster
+    user: pi-agent
+  name: in-cluster
+current-context: in-cluster
+users:
+- name: pi-agent
+  user:
+    tokenFile: ${SA_DIR}/token
+EOF
+  chmod 600 "${KUBECONFIG}"
+fi
+
+# ---------------------------------------------------------------------------
+# 3. Clone / update the gitops repository
 # ---------------------------------------------------------------------------
 if [ ! -d "${REPO_DIR}/.git" ]; then
   echo "[pi-agent] cloning ${REPO_URL} -> ${REPO_DIR}"
@@ -49,7 +78,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 3. Validate config was injected
+# 4. Validate config was injected
 # ---------------------------------------------------------------------------
 for f in settings.json mcp.json models.json; do
   if [ ! -f "${PI_AGENT_DIR}/${f}" ]; then
@@ -59,7 +88,7 @@ done
 [ -f "${KUBECONFIG}" ] || echo "[pi-agent] WARNING: ${KUBECONFIG} not found"
 
 # ---------------------------------------------------------------------------
-# 4. Start pi in tmux
+# 5. Start pi in tmux
 # ---------------------------------------------------------------------------
 cd "${REPO_DIR}"
 
